@@ -33,18 +33,41 @@ export class EquipmentComponent implements OnInit {
 
    // Code your addItem function here:
    addItems(equipmentPiece:equipment):boolean {
-    this.cargoHold.push(equipmentPiece);
-    this.cargoMass += equipmentPiece.mass;
-    if (this.cargoMass+200 > this.maximumAllowedMass) {
+    if (this.underTwoItems(equipmentPiece)) {
+      this.cargoHold.push(equipmentPiece);
+      this.cargoMass += equipmentPiece.mass;
+    }
+    if (this.cargoMass+200 > this.maximumAllowedMass || this.maxItems === this.cargoHold.length) {
       return false;
     }
     return true;
    }
+
+   removeItems(equipmentPiece:equipment) {
+    let equipmentIndex = this.cargoHold.indexOf(equipmentPiece);
+    this.cargoHold.splice(equipmentIndex,1);
+    this.cargoMass = this.cargoMass-equipmentPiece.mass;
+   }
+
    clearHold(){
     let result = window.confirm('Are you sure you want to remove all items?');
     if (result) {
       this.cargoHold=[];
       this.cargoMass=0;
+    }
+   }
+
+   underTwoItems(newItem:equipment) {
+    let numOfItems: number = 0;
+    for (let i=0;i<this.cargoHold.length;i++) {
+      if (this.cargoHold[i] === newItem) {
+        numOfItems++
+      }
+    }
+    if (numOfItems >= 2) {
+      return false;
+    } else {
+      return true;
     }
    }
 }
